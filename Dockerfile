@@ -1,0 +1,33 @@
+# File: Dockerfile
+# Slim, non-root production image for the FastAPI profile service.
+
+FROM python:3.11-slim AS base
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+WORKDIR /app
+
+# Install only the runtime subset (kept in lockstep with requirements.txt)
+RUN pip install --no-cache-dir \
+    fastapi==0.115.12 \
+    uvicorn==0.34.0 \
+    pydantic==2.11.5 \
+    redis==5.2.1
+
+COPY profile_service/ ./profile_service/
+COPY data/risk_profiles.json ./data/risk_profiles.json
+
+# Non-root runtime user
+RUN useradd --uid 10001 --create-home --shell /usr/sbin/nologin appuser \
+    && chown -R appuser:appuser /app
+USER appuser
+
+EXPOSE 8000
+
+HEALTHCHECK --interval=15s --timeout=3s --start-period=10s --retries=5 \
+    CMD ["python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2).status == 200 else 1)"]
+
+CMD ["uvicorn", "profile_service.main:app", "--host", "0.0.0.0", "--port", "8000"]

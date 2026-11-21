@@ -1,0 +1,23 @@
+# File: requirements.txt
+# Pinned dependencies for the realtime-fraud-detection project.
+# Python 3.11 recommended (PySpark 3.5.x compatible).
+
+# --- Streaming core ---
+pyspark==3.5.1
+delta-spark==3.2.0            # matches Spark 3.5.x; provides io.delta jars locally
+
+# --- Messaging ---
+kafka-python-ng==2.2.3        # maintained fork of kafka-python (same import path)
+
+# --- Profile service (FastAPI + async Redis + Pydantic v2) ---
+fastapi==0.115.12
+uvicorn[standard]==0.34.0
+redis==5.2.1
+pydantic==2.11.5
+
+# --- Numerical stack required by pandas UDFs in the streaming job ---
+numpy==2.2.6
+pandas==2.2.3
+
+# --- Utilities ---
+python-dotenv==1.1.0

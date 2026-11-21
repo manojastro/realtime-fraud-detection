@@ -1,0 +1,122 @@
+# File: docker-compose.yml
+# Local infrastructure for the real-time fraud-detection pipeline.
+#
+#   docker compose up -d --build
+#
+# Services:
+#   kafka            single-node KRaft (no ZooKeeper) with host access on :29092
+#   kafka-init       one-shot topic provisioning via infra/topics_setup.sh
+#   redis            Redis 7 with AOF persistence for the profile cache
+#   profile-service  FastAPI user risk-profile API (cache-aside over Redis)
+#
+# NOTE: the PySpark streaming job is intentionally NOT run as a container here —
+# it needs a full Spark distribution + Delta jars. Run it from the host:
+#   spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1,io.delta:delta-spark_2.12:3.2.0 \
+#     streaming/fraud_stream.py --bootstrap-servers localhost:29092 ...
+# (On Databricks, use databricks/notebook_run.py instead.)
+
+name: realtime-fraud-detection
+
+networks:
+  fraud-net:
+    driver: bridge
+
+volumes:
+  kafka_data:
+  redis_data:
+
+services:
+  # ---------------------------------------------------------------- Kafka ----
+  kafka:
+    image: bitnami/kafka:3.7
+    container_name: fraud-kafka
+    restart: unless-stopped
+    ports:
+      - "29092:29092"           # external listener for host-side producer/spark
+    environment:
+      # KRaft single-node: controller + broker in one process, no ZooKeeper.
+      KAFKA_CFG_NODE_ID: "0"
+      KAFKA_CFG_PROCESS_ROLES: controller,broker
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@kafka:9093
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:29092
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,EXTERNAL://localhost:29092
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "false"   # topics are provisioned explicitly
+      KAFKA_CFG_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
+      KAFKA_CFG_NUM_PARTITIONS: "6"
+    volumes:
+      - kafka_data:/bitnami/kafka
+    networks:
+      - fraud-net
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics.sh --bootstrap-server localhost:9092 --list >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 20s
+
+  # ------------------------------------------------------- Topic creation ----
+  kafka-init:
+    image: bitnami/kafka:3.7
+    container_name: fraud-kafka-init
+    restart: "no"
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      BOOTSTRAP_SERVERS: kafka:9092
+    volumes:
+      - ./infra/topics_setup.sh:/app/topics_setup.sh:ro
+    entrypoint: ["/bin/bash", "/app/topics_setup.sh"]
+    networks:
+      - fraud-net
+
+  # ---------------------------------------------------------------- Redis ----
+  redis:
+    image: redis:7-alpine
+    container_name: fraud-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--appendfsync", "everysec"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - fraud-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
+
+  # ------------------------------------------------------- Profile service ---
+  profile-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: fraud-profile-service:1.0.0
+    container_name: fraud-profile-service
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      PROFILE_TTL_SECONDS: "300"
+      PROFILES_SEED_PATH: /app/data/risk_profiles.json
+      LOG_LEVEL: INFO
+    volumes:
+      - ./data:/app/data:ro
+    networks:
+      - fraud-net
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2).status == 200 else 1)\""]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+      start_period: 10s

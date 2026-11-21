@@ -1,0 +1,162 @@
+[
+  {
+    "user_id": "u_0001",
+    "risk_tier": "low",
+    "lifetime_amount": 24518.75,
+    "avg_txn_amount": 54.20,
+    "country": "US",
+    "updated_at": "2026-08-20T09:15:00Z"
+  },
+  {
+    "user_id": "u_0002",
+    "risk_tier": "medium",
+    "lifetime_amount": 87120.40,
+    "avg_txn_amount": 189.35,
+    "country": "GB",
+    "updated_at": "2026-08-19T22:41:00Z"
+  },
+  {
+    "user_id": "u_0003",
+    "risk_tier": "low",
+    "lifetime_amount": 4310.05,
+    "avg_txn_amount": 21.80,
+    "country": "DE",
+    "updated_at": "2026-08-21T07:02:00Z"
+  },
+  {
+    "user_id": "u_0004",
+    "risk_tier": "high",
+    "lifetime_amount": 152300.90,
+    "avg_txn_amount": 745.60,
+    "country": "IN",
+    "updated_at": "2026-08-18T16:55:00Z"
+  },
+  {
+    "user_id": "u_0005",
+    "risk_tier": "low",
+    "lifetime_amount": 9820.15,
+    "avg_txn_amount": 33.75,
+    "country": "SG",
+    "updated_at": "2026-08-20T11:30:00Z"
+  },
+  {
+    "user_id": "u_0006",
+    "risk_tier": "medium",
+    "lifetime_amount": 51244.60,
+    "avg_txn_amount": 96.10,
+    "country": "BR",
+    "updated_at": "2026-08-17T13:12:00Z"
+  },
+  {
+    "user_id": "u_0007",
+    "risk_tier": "medium",
+    "lifetime_amount": 18342.55,
+    "avg_txn_amount": 62.10,
+    "country": "US",
+    "updated_at": "2026-08-20T09:15:00Z"
+  },
+  {
+    "user_id": "u_0008",
+    "risk_tier": "low",
+    "lifetime_amount": 1560.00,
+    "avg_txn_amount": 12.45,
+    "country": "FR",
+    "updated_at": "2026-08-21T18:20:00Z"
+  },
+  {
+    "user_id": "u_0009",
+    "risk_tier": "high",
+    "lifetime_amount": 96450.25,
+    "avg_txn_amount": 410.85,
+    "country": "GB",
+    "updated_at": "2026-08-16T08:47:00Z"
+  },
+  {
+    "user_id": "u_0010",
+    "risk_tier": "low",
+    "lifetime_amount": 33075.80,
+    "avg_txn_amount": 74.95,
+    "country": "CA",
+    "updated_at": "2026-08-19T14:03:00Z"
+  },
+  {
+    "user_id": "u_0011",
+    "risk_tier": "medium",
+    "lifetime_amount": 27890.35,
+    "avg_txn_amount": 88.40,
+    "country": "AU",
+    "updated_at": "2026-08-18T20:26:00Z"
+  },
+  {
+    "user_id": "u_0012",
+    "risk_tier": "low",
+    "lifetime_amount": 6740.20,
+    "avg_txn_amount": 29.99,
+    "country": "JP",
+    "updated_at": "2026-08-21T05:58:00Z"
+  },
+  {
+    "user_id": "u_0013",
+    "risk_tier": "high",
+    "lifetime_amount": 210880.00,
+    "avg_txn_amount": 1204.50,
+    "country": "SG",
+    "updated_at": "2026-08-15T10:34:00Z"
+  },
+  {
+    "user_id": "u_0014",
+    "risk_tier": "low",
+    "lifetime_amount": 11205.65,
+    "avg_txn_amount": 48.70,
+    "country": "NL",
+    "updated_at": "2026-08-20T16:49:00Z"
+  },
+  {
+    "user_id": "u_0015",
+    "risk_tier": "medium",
+    "lifetime_amount": 39877.45,
+    "avg_txn_amount": 132.25,
+    "country": "DE",
+    "updated_at": "2026-08-17T23:07:00Z"
+  },
+  {
+    "user_id": "u_0016",
+    "risk_tier": "low",
+    "lifetime_amount": 2860.90,
+    "avg_txn_amount": 15.60,
+    "country": "ES",
+    "updated_at": "2026-08-21T12:38:00Z"
+  },
+  {
+    "user_id": "u_0017",
+    "risk_tier": "medium",
+    "lifetime_amount": 74320.10,
+    "avg_txn_amount": 205.15,
+    "country": "US",
+    "updated_at": "2026-08-19T06:21:00Z"
+  },
+  {
+    "user_id": "u_0018",
+    "risk_tier": "high",
+    "lifetime_amount": 134500.75,
+    "avg_txn_amount": 890.30,
+    "country": "AE",
+    "updated_at": "2026-08-14T19:44:00Z"
+  },
+  {
+    "user_id": "u_0019",
+    "risk_tier": "low",
+    "lifetime_amount": 15980.30,
+    "avg_txn_amount": 57.85,
+    "country": "SE",
+    "updated_at": "2026-08-20T21:52:00Z"
+  },
+  {
+    "user_id": "u_0020",
+    "risk_tier": "medium",
+    "lifetime_amount": 46115.85,
+    "avg_txn_amount": 141.05,
+    "country": "CH",
+    "updated_at": "2026-08-18T09:09:00Z"
+  }
+]
